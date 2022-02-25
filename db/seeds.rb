@@ -1,0 +1,1 @@
+User.create(username: "Matteo", age: 30, email: "matteo.piccini2@flatironschool.com", password: "password")
