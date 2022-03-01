@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base #621 methods now with AR
- #439 instance methods w AR
- has_many :plants
+  #439 instance methods w AR
+  has_many :plants
+  validates :username, length: {minimum: 5}
 end
 
