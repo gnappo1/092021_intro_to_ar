@@ -1,3 +1,3 @@
-class Plant < ActiveRecord::Base
-    belongs_to :user
+class Plant < ApplicationRecord
+    belongs_to :user #6 methods user, user=
 end

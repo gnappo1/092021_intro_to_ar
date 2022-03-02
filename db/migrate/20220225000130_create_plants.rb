@@ -5,7 +5,7 @@ class CreatePlants < ActiveRecord::Migration[5.2]
       t.string :species
       t.integer :sun_exposure
       t.integer :watering_freq
-
+      t.belongs_to :user
       t.timestamps
     end
   end
