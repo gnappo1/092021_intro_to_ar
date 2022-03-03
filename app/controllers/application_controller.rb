@@ -8,4 +8,10 @@ class ApplicationController < Sinatra::Base
     set :default_content_type, :json
   end
 
+  private
+
+  def shared_helper_method
+    puts "I am visible in every controller!"
+  end
+
 end
