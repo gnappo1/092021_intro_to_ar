@@ -10,7 +10,9 @@ gem 'shotgun'
 gem 'pry'
 gem 'bcrypt'
 gem 'faker'
-gem "tux"
+gem 'tux'
+gem 'rack-cors'
+gem "rack-contrib"
 
 group :development do
   gem 'sqlite3'

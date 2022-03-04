@@ -3,7 +3,6 @@ class UsersController < ApplicationController
 
   # GET: /users
   get "/users" do
-    binding.pry
     User.all.to_json(include: [plants: {except: [:created_at, :updated_at]}], except: [:created_at, :updated_at])
   end
 
@@ -19,18 +18,17 @@ class UsersController < ApplicationController
 
   # GET: /users/5
   get "/users/:id" do
-    # user = User.find_by(id: params["id"])
-    # user = User.find_by_id(params["id"])
-    begin 
-      User.find(params["id"]).to_json(include: :plants)
-    rescue ActiveRecord::RecordNotFound => e
-      {errors: e}.to_json
-    end
-    # if user
-    #   serialized_user
-    # else
-    #   {errors: "Record not found with id #{params['id']}}.to_json
+    # begin 
+    #   User.find(params["id"]).to_json(include: :plants)
+    # rescue ActiveRecord::RecordNotFound => e
+    #   {errors: e}.to_json
     # end
+    find_user
+    if @user
+      serialized_user
+    else
+      {errors: "Record not found with id #{params['id']}"}.to_json
+    end
   end
 
   # PATCH: /users/5
