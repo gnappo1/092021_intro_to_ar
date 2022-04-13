@@ -1,50 +1,75 @@
 require "pry"
 class UsersController < ApplicationController
-
+  
   # GET: /users
   get "/users" do
-    User.all.to_json(include: [plants: {only: [:name, :species]}], except: [:created_at, :updated_at])
+    User.all.to_json(include: [plants: {except: [:created_at, :updated_at]}], except: [:created_at, :updated_at])
   end
 
   # POST: /users
-  post "/users" do
-    new_user = User.create(params)
-    if new_user.id
-      new_user.to_json
+  post "/users" do #equivalent of /signup
+
+    @user = User.create(params)
+    if user.id
+      session[:user_id] = user.id
+      serialized_user
     else
-      { errors: author.errors.full_messages.to_sentence }.to_json
+      user.errors.full_messages.to_sentence
     end
+  end
+
+  get "/most-plants" do
+    user = User.most_plants
+    user.to_json(include: :plants)
   end
 
   # GET: /users/5
   get "/users/:id" do
-    begin
-      User.find(params[:id]).to_json
-    rescue ActiveRecord::RecordNotFound => e
-      { error: e }.to_json
+
+    # begin 
+    #   User.find(params["id"]).to_json(include: :plants)
+    # rescue ActiveRecord::RecordNotFound => e
+    #   {errors: e}.to_json
+    # end
+    find_user
+    if @user
+      serialized_user
+    else
+      {errors: "Record not found with id #{params['id']}"}.to_json
     end
   end
 
   # PATCH: /users/5
   patch "/users/:id" do
-    begin
-      user = User.find(params[:id])
-      begin
-        user.update!(params)
-        "Profile successfully updated!"
-      rescue ActiveRecord::RecordInvalid, ActiveRecord::UnknownAttributeError => e
-        { error: e}.to_json
-      end
+    find_user
+    if @user && @user.update(params)
+      serialized_user
+    elsif !@user
+      {errors: "Record not found with id #{params['id']}"}.to_json
+    else
+      {errors: @user.errors.full_messages.to_sentence}.to_json
     end
   end
 
   # DELETE: /users/5/delete
-  delete "/users/:id/delete" do
-    user = User.find_by_id(params[:id])
-    if user&.destroy
-      "Your profile has been destoryed permamnently"
+
+  delete "/users/:id" do
+    find_user
+    if @user&.destroy
+      {messages: "Record successfully destroyed"}.to_json
     else
-      { errors: user.errors.full_messages.to_sentence }.to_json
+      {errors: "Record not found with id #{params['id']}"}.to_json
     end
+  end
+
+
+  private
+
+  def find_user
+    @user = User.find_by_id(params["id"])
+  end
+
+  def serialized_user
+    @user.to_json(include: :plants)
   end
 end
